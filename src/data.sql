@@ -1,0 +1,1 @@
+insert into bus values(1, '11', '22', 3);
