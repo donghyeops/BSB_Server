@@ -16,7 +16,7 @@ public class Client {
 	
 	public Client() {
 		try {
-			connection = new Socket("117.20.90.63", 9446);
+			connection = new Socket("localhost", 9446);
 			connection.setSoTimeout(15000);
 			try {
 				output_stream = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
@@ -24,7 +24,7 @@ public class Client {
 			} catch (IOException e) {
 				System.out.println("[스트림 생성 오류 : "+new String(connection.getInetAddress().getAddress())+"]");
 			}
-			
+			System.out.println("서버와 연결 성공");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,7 +61,7 @@ public class Client {
 	
 	public void dodo() {
 		sendMsg("1");
-		System.out.println("메시지 전송 완료");
+		System.out.println("1보냄");
 		//s.is
 		String msg;
 		msg = receiveMsg();

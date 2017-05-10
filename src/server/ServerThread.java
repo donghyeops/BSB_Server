@@ -42,6 +42,7 @@ public class ServerThread extends Thread {
 	
 	// 서버 스레드의 run 메소드.
 	public void run() {
+		System.out.println("서버 열림");
 		STOP_FLAG = false;
 		while (!STOP_FLAG) {
 			try {
@@ -62,6 +63,7 @@ public class ServerThread extends Thread {
 			sleep(500);
 			server.close(); // 서버 소켓 닫기
 			serverThread = null; // 새로운 서버 스레드를 생성할 떄를 대비해 null로 초기화해줌.
+			System.out.println("서버 닫힘");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
