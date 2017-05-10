@@ -55,6 +55,7 @@ public class ChildThread implements Callable<Void> {
 	// 콜 메소드. 풀에 등록되어 자동으로 호출되고 return하면 종료됨.
 	@Override
 	public Void call() throws Exception {
+		System.out.println("새 클라이언트 접속");
 		while (connection.isConnected()) {
 			String msg = receiveMsg(); // 메시지 수신
 			StringTokenizer s_msg = new StringTokenizer(msg, "-"); // 받은 메시지 쪼개기.

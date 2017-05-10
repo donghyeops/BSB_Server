@@ -45,7 +45,6 @@ public class ServerThread extends Thread {
 		STOP_FLAG = false;
 		while (!STOP_FLAG) {
 			try {
-				System.out.println("새 클라이언트 접속");
 				Socket connection = server.accept();
 				Callable<Void> task = new ChildThread(connection); // 자석 스레드 생성
 				
