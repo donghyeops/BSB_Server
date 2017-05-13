@@ -1,1 +1,1 @@
-insert into bus values(1, '11', '22', 3);
+insert into bus values(0, '15812F', '15812B', 2.70, "127.0.0.1", 7770);

@@ -91,12 +91,39 @@ public class SQL_DB implements DB {
 		return balance;
 	}
 	
-	public String getBusAddress(int bus_ID) {
-		return "127.0.0.1:7770";
+	public String getBusAddress(int bus_id) {
+		String sql = "select ip, port from bus where bus_id='" + bus_id + "'";
+		String address = null;
+		try {
+			connect();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				address = rs.getString("ip") + ":" + rs.getInt("port");
+			}
+			rs.close();
+			disconnect();
+		} catch (Exception e) {
+			System.out.println("버스 주소 정보 조회 실패");
+		}
+		return address;
 	}
 	
-	public String[] getBusBeacon(int bus_ID) {
+	public String[] getBusBeacon(int bus_id) {
 		String[] beaconInfo = new String[3];
+		String sql = "select f_beacon, b_beacon, distance from bus where bus_id='" + bus_id + "'";
+		try {
+			connect();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				beaconInfo[0] = rs.getString("f_beacon");
+				beaconInfo[1] = rs.getString("b_beacon");
+				beaconInfo[2] = Float.toString(rs.getFloat("distance"));
+			}
+			rs.close();
+			disconnect();
+		} catch (Exception e) {
+			System.out.println("버스 비콘 정보 조회 실패");
+		}
 		return beaconInfo;
 	}
 }
