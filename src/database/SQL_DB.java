@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+// synchronize 걸어야함
 public class SQL_DB implements DB {
 	private String jdbc_driver = "com.mysql.jdbc.Driver";
 	private String jdbc_url = "jdbc:mysql://localhost:3307/bsb?characterEncoding=utf8&autoReconnect=true&useSSL=false";
@@ -88,5 +89,14 @@ public class SQL_DB implements DB {
 			System.out.println(e.getMessage() + "  입금내역저장실패");
 		}
 		return balance;
+	}
+	
+	public String getBusAddress(int bus_ID) {
+		return "127.0.0.1:7770";
+	}
+	
+	public String[] getBusBeacon(int bus_ID) {
+		String[] beaconInfo = new String[3];
+		return beaconInfo;
 	}
 }

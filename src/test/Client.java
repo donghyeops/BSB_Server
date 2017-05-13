@@ -60,8 +60,8 @@ public class Client {
 	
 	
 	public void dodo() {
-		sendMsg("1");
-		System.out.println("1보냄");
+		sendMsg("8");
+		System.out.println("보냄");
 		//s.is
 		String msg;
 		msg = receiveMsg();

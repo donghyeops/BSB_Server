@@ -2,10 +2,12 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import database.DB;
+import database.SQL_DB;
 
 /**
  * 서버 스레드
@@ -17,6 +19,7 @@ public class ServerThread extends Thread {
 	private static boolean STOP_FLAG = false;
 	private ExecutorService pool;
 	private ServerSocket server;
+	private DB db = new SQL_DB();
 	
 	// 싱글톤
 	public static ServerThread getInstance() {
@@ -47,7 +50,7 @@ public class ServerThread extends Thread {
 		while (!STOP_FLAG) {
 			try {
 				Socket connection = server.accept();
-				Callable<Void> task = new ChildThread(connection); // 자석 스레드 생성
+				Callable<Void> task = new ChildThread(connection, db); // 자석 스레드 생성
 				
 				pool.submit(task); // 풀에 등록
 			} catch (IOException e) { }
