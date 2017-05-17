@@ -29,6 +29,7 @@ public class ChildThread implements Callable<Void> {
 	// 자식 스레드 생성자 : 초기화 역할
 	public ChildThread(Socket connection, DB db) {
 		this.app_socket = connection;
+		this.db = db;
 		CC = new Communicator(connection, db);
 	}
 		
@@ -56,8 +57,10 @@ public class ChildThread implements Callable<Void> {
 			case MSG.Reservation_AtoS_1:
 				if (reservateGetOn(s_msg))
 					Log.out("어플", "IN", app_socket, "ID:" + reservation.bus_id + " 버스 예약");
-				else
+				else {
 					Log.err("어플", "IN", app_socket, "예약 실패");
+					CC.sendToApp(MSG.Failure_StoA_0);
+				}
 				break;
 				
 			/* 예약 취소 메시지 */
@@ -121,6 +124,7 @@ public class ChildThread implements Callable<Void> {
 			return false;
 		
 		System.out.println("버스에게 메시지 전송함");
+		System.out.println("버스 아이디 : " + reservation.bus_id);
 		String[] beaconInfo = db.getBusBeacon(reservation.bus_id); // DB로부터 버스의 비콘 정보 부르기
 		System.out.println("beaconInfo 받아옴");
 		if (beaconInfo == null)
