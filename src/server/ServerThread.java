@@ -45,7 +45,8 @@ public class ServerThread extends Thread {
 	
 	// 서버 스레드의 run 메소드.
 	public void run() {
-		System.out.println("서버 열림");
+		System.out.println("\n[" + server.getInetAddress().getHostAddress() + ":" + server.getLocalPort() + "] 서버 열림");
+
 		STOP_FLAG = false;
 		while (!STOP_FLAG) {
 			try {

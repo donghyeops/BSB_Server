@@ -86,10 +86,29 @@ public class SQL_DB implements DB {
 			stmt2.close();
 			disconnect();
 		} catch (Exception e) {
-			System.out.println(e.getMessage() + "  입금내역저장실패");
+			System.out.println(e.getMessage() + "입금내역저장실패");
 		}
 		return balance;
 	}
+	
+	// 계좌와 비밀번호 확인 (샘플3 : 찾은 데이터가 없을 때)
+	public boolean acc_login(String account_id, int account_pwd) {
+		String sql = "select * from account where account_id='" + account_id + "' AND account_pwd=" + account_pwd + "";
+		System.out.println(sql);
+		boolean chck = false;
+		try {
+			connect();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				chck = true;
+			}
+			disconnect();
+		} catch (Exception e) {
+			System.out.println("계좌로그인실패");
+		}
+		return chck;
+	}
+	
 	
 	public String getBusAddress(int bus_id) {
 		String sql = "select ip, port from bus where bus_id='" + bus_id + "'";
@@ -103,7 +122,7 @@ public class SQL_DB implements DB {
 			rs.close();
 			disconnect();
 		} catch (Exception e) {
-			System.out.println("버스 주소 정보 조회 실패");
+			return null;
 		}
 		return address;
 	}
@@ -118,11 +137,12 @@ public class SQL_DB implements DB {
 				beaconInfo[0] = rs.getString("f_beacon");
 				beaconInfo[1] = rs.getString("b_beacon");
 				beaconInfo[2] = Float.toString(rs.getFloat("distance"));
-			}
+			} else
+				return null;
 			rs.close();
 			disconnect();
 		} catch (Exception e) {
-			System.out.println("버스 비콘 정보 조회 실패");
+			return null;
 		}
 		return beaconInfo;
 	}

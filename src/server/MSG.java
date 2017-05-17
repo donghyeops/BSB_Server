@@ -6,6 +6,11 @@ package server;
  * value : 메시지 값
  * */
 public interface MSG {
+	/** 실패 메시지
+	 *  <p> Example : "0"
+	 *  */
+	int Failure_StoA_0 = 0;
+	
 	/** 초기 예약 메시지(탑승하려는 버스ID, 출발정류장ID)
 	 *  <p> Example : "1-4575-41571"
 	 *  */

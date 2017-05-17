@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 
 import database.DB;
 import server.function.Communicator;
+import server.function.Log;
 import server.function.PaySystem;
 import server.function.Reservation;
 import server.function.SenderToBus;
@@ -34,7 +35,8 @@ public class ChildThread implements Callable<Void> {
 	// 콜 메소드. 풀에 등록되어 자동으로 호출되고 return하면 종료됨.
 	@Override
 	public Void call() throws Exception {
-		System.out.println("새 클라이언트 접속");
+		System.out.println("\n[" + app_socket.getInetAddress().getHostAddress() + ":" + app_socket.getLocalPort() + "] 새 클라이언트 접속");
+		
 		reservation = new Reservation(); // 예약 정보 클래스
 		while (app_socket.isConnected()) {
 			String msg = CC.recvFromApp(); // 메시지 수신
@@ -43,7 +45,7 @@ public class ChildThread implements Callable<Void> {
 			try {
 				type = Integer.parseInt(s_msg.nextToken()); // 타입 추출
 			} catch (NumberFormatException e) {
-				System.err.println("잘못된 메시지 형식입니다.");
+				Log.err("어플", "IN", app_socket, "잘못된 메시지 형식");
 				continue;
 			}
 			
@@ -53,9 +55,9 @@ public class ChildThread implements Callable<Void> {
 			/* 예약 메시지 */
 			case MSG.Reservation_AtoS_1:
 				if (reservateGetOn(s_msg))
-					System.out.println("[Reservation_AtoS_1] 처리 성공");
+					Log.out("어플", "IN", app_socket, "ID:" + reservation.bus_id + " 버스 예약");
 				else
-					System.out.println("[Reservation_AtoS_1] 처리 실패");
+					Log.err("어플", "IN", app_socket, "예약 실패");
 				break;
 				
 			/* 예약 취소 메시지 */
@@ -96,15 +98,15 @@ public class ChildThread implements Callable<Void> {
 				
 			/* 정의된 메시지 타입이 아닐 때 */
 			default:
-				CC.sendToApp("해당 메시지 없음 !");
-				System.err.println("정의되지 않은 메시지 타입입니다.");
+				CC.sendToApp(MSG.Failure_StoA_0);
+				System.err.println("[(어플/IN)" + app_socket.getInetAddress().getHostAddress() + ":" + app_socket.getLocalPort() +"] 정의되지 않은 메시지 타입");
 				continue;
 			}
 		}
 		if (app_socket.isConnected())
-			System.out.println("[" + app_socket.getLocalAddress().toString() + "] 어플리케이션과 연결 끊김");
+			System.err.println("[(어플/CO)" + app_socket.getInetAddress().getHostAddress() + ":" + app_socket.getLocalPort() +"] 연결 끊김");
 		
-		System.out.println("[" + app_socket.getLocalAddress().toString() + "] 서비스 종료");
+		System.out.println("[(어플/CO)" + app_socket.getInetAddress().getHostAddress() + ":" + app_socket.getLocalPort() +"] 서비스 종료");
 		app_socket.close();
 		return null;
 	}
@@ -114,22 +116,24 @@ public class ChildThread implements Callable<Void> {
 		reservation.inputReservation(s_msg); // 예약 정보 받아서 기록
 		if (!CC.connectToBus(reservation.bus_id)) // 버스 아두이노와 연결
 			return false;
-		sender_GetOn = new SenderToBus(MSG.GetOnNext_StoB_2, CC);
-		sender_GetOn.start(); // 버스가 전 정류장에 오면 메시지를 보내도록 함
 		
+		if (!CC.sendToBus(MSG.GetOnNext_StoB_2)) // 버스에게 탑승 알람 메시지 전송
+			return false;
+		
+		System.out.println("버스에게 메시지 전송함");
 		String[] beaconInfo = db.getBusBeacon(reservation.bus_id); // DB로부터 버스의 비콘 정보 부르기
+		System.out.println("beaconInfo 받아옴");
+		if (beaconInfo == null)
+			return false;
+		
 		String msg = MSG.NotifyOfBusBeacon_StoA_3 + "-" + beaconInfo[0] + "-" + beaconInfo[1] + "-" + beaconInfo[2];
-		return CC.sendToBus(msg); // 어플에게 비콘 정보 보냄
+		System.out.println(msg);
+		return CC.sendToApp(msg); // 어플에게 비콘 정보 보냄
 	}
 	
 	/** 예약 취소 함수 */
 	private boolean cancelReservation() {
-		if (sender_GetOn.isAlive()) // 메시지를 보내기는 스레드가 끝나지 않으면
-			sender_GetOn.doStop(); // 스레드 루트 종료 명령
-		
-		if (sender_GetOn.isSended()) // 스레드 루트를 종료시켜도 메시지가 가는 경우가 있음. 따라서 메시지가 보내졌는 지 확인  
-			return CC.sendToBus(MSG.CancelReservation_StoB_5); // 메시지가 보내졌다면 취소 메시지를 추가로 보냄
-		return true;
+		return CC.sendToBus(MSG.CancelReservation_StoB_5); // 취소 메시지 전송
 	}
 	
 	/** 탑승 처리 함수 */

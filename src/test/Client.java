@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Client {
 	private Socket connection = null; // 서버와 연결된 소켓
@@ -16,7 +17,7 @@ public class Client {
 	
 	public Client() {
 		try {
-			connection = new Socket("localhost", 9446);
+			connection = new Socket("117.20.90.63", 9446);
 			connection.setSoTimeout(15000);
 			try {
 				output_stream = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
@@ -32,7 +33,6 @@ public class Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		dodo();
 	}
 	public void sendMsg(String msg) {
 		try {
@@ -58,24 +58,27 @@ public class Client {
 		return msg;
 	}
 	
-	
-	public void dodo() {
-		sendMsg("8");
-		System.out.println("보냄");
-		//s.is
-		String msg;
-		msg = receiveMsg();
-		System.out.println(msg);
+	public static void main(String[] args) {
+		Client client = new Client();
+		Scanner scan = new Scanner(System.in);
+		String sendMsg = "0";
+		String recvMsg = null;
+		
+		while (!sendMsg.equals("-1")) {
+			System.out.print("보낼 메시지 입력 : ");
+			sendMsg = scan.nextLine();
+			
+			client.sendMsg(sendMsg); // 메시지 전송
+			
+			recvMsg = client.receiveMsg(); // 메시지 수신
+			System.out.println("받은 메시지 : " + recvMsg);
+		}
 		
 		try {
-			connection.close();
+			client.connection.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public static void main(String[] args) {
-		Client client = new Client();
 	}
 }
