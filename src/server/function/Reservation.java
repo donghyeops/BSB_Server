@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 
 /** 예약 정보 클래스 */
 public class Reservation {
+	public boolean isReservated = false; // 예약 됬는지 확인
 	public int bus_id; // 탑승하려는 버스 ID
 	public String de_stop; // 출발 정류장 ID
 	public String ap_stop; // 도착 정류장 ID

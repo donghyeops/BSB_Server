@@ -29,7 +29,7 @@ public class Communicator {
 			app_output = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 			app_intput = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		} catch (IOException e) {
-			System.err.println("[(어플/CO)" + connection.getInetAddress().getHostAddress() + ":" + connection.getLocalPort() +"] 스트림 생성 오류");
+			Log.err("어플", "CO", app_socket, "스트림 생성 오류");
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class Communicator {
 	public boolean connectToBus(int bus_id) {
 		String address = db.getBusAddress(bus_id);
 		if (address == null) {
-			System.err.println("[(어플/IN)" + app_socket.getInetAddress().getHostAddress() + ":" + app_socket.getLocalPort() +"] 없는 버스 아이디 (입력된 아이디 = " + bus_id + ")");
+			Log.err("어플", "IN", app_socket, "없는 버스 아이디 (입력된 아이디 = " + bus_id + ")");
 			return false;
 		}
 		String[] BusAddress = address.split(":"); // 0: IP, 1: PORT
@@ -50,9 +50,9 @@ public class Communicator {
 				bus_output = new BufferedWriter(new OutputStreamWriter(bus_socket.getOutputStream()));
 				bus_intput = new BufferedReader(new InputStreamReader(bus_socket.getInputStream()));
 			} catch (IOException e) {
-				System.err.println("[(버스/CO)" + BusAddress[0] + ":" + BusAddress[1] + "] 스트림 생성 오류");
+				Log.err("버스", "CO", bus_socket, "스트림 생성 오류");
 			}
-			System.out.println("[(버스/CO)" + BusAddress[0] + ":" + BusAddress[1] + "] 버스 아두이노와 연결 성공 ");
+			Log.out("버스", "CO", bus_socket, "버스 아두이노와 연결 성공");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			return false;
@@ -70,14 +70,17 @@ public class Communicator {
 			app_output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.err.println("[(어플/OUT)" + app_socket.getInetAddress().getHostAddress() + ":" + app_socket.getLocalPort() +"] 메시지 전송 실패");
+			Log.err("어플", "OUT", app_socket, "메시지 전송 실패");
 			return false;
 		}
 		return true;
 	}
+
 	public boolean sendToApp(int msg) {
 		return sendToApp(Integer.toString(msg));
 	}
+
+
 	public String recvFromApp() {
 		String msg = null;
 		
@@ -85,10 +88,12 @@ public class Communicator {
 			msg = app_intput.readLine(); // 메시지 수신
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			System.err.println("[(어플/IN)" + app_socket.getInetAddress().getHostAddress() + ":" + app_socket.getLocalPort() +"] 메시지 수신 실패");
+			Log.err("어플", "IN", app_socket, "메시지 수신 실패");
 		}
 		return msg;
 	}
+
+
 	public boolean sendToBus(String msg) {
 		try {
 			bus_output.write(msg);
@@ -96,14 +101,16 @@ public class Communicator {
 			bus_output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.err.println("[(버스/OUT)" + bus_socket.getInetAddress().getHostAddress() + ":" + bus_socket.getLocalPort() +"] 메시지 전송 실패");
+			Log.err("버스", "OUT", bus_socket, "메시지 전송 실패");
 			return false;
 		}
 		return true;
 	}
+
 	public boolean sendToBus(int msg) {
 		return sendToBus(Integer.toString(msg));
 	}
+
 	public String recvFromBus() {
 		String msg = null;
 		
@@ -111,8 +118,23 @@ public class Communicator {
 			msg = bus_intput.readLine(); // 메시지 수신
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			System.err.println("[(버스/IN)" + bus_socket.getInetAddress().getHostAddress() + ":" + bus_socket.getLocalPort() +"] 메시지 수신 실패");
+			Log.err("버스", "IN", bus_socket, "메시지 수신 실패");
 		}
 		return msg;
+	}
+
+	/** 소켓 연결 해제 */
+	public void endConnect() throws IOException {
+		// 어플과의 연결 종료
+		app_output.close();
+		app_intput.close();
+		app_socket.close();
+
+		// 버스와의 연결 종료
+		if (bus_socket == null)
+			return;
+		bus_output.close();
+		bus_intput.close();
+		bus_socket.close();
 	}
 }

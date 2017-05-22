@@ -64,18 +64,29 @@ public class Client {
 		String sendMsg = "0";
 		String recvMsg = null;
 		
+		System.out.print("보낼 메시지 입력 : ");
+		sendMsg = scan.nextLine();
 		while (!sendMsg.equals("-1")) {
-			System.out.print("보낼 메시지 입력 : ");
-			sendMsg = scan.nextLine();
-			
 			client.sendMsg(sendMsg); // 메시지 전송
 			
 			recvMsg = client.receiveMsg(); // 메시지 수신
+			if (recvMsg == null) {
+				System.err.println("서버 미응답");
+				break;
+			}
 			System.out.println("받은 메시지 : " + recvMsg);
+			
+			
+			
+			System.out.print("보낼 메시지 입력 : ");
+			sendMsg = scan.nextLine();
 		}
 		
 		try {
+			client.output_stream.close();
+			client.input_stream.close();
 			client.connection.close();
+			System.out.println("연결 해제");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

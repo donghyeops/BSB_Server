@@ -15,7 +15,7 @@ public class BusArduino {
 		ServerSocket busServer = null;
 		Socket connection = null;
 		BufferedWriter output = null;
-		BufferedReader intput = null;
+		BufferedReader input = null;
 		
 		try {
 			busServer = new ServerSocket(PORT);
@@ -24,23 +24,40 @@ public class BusArduino {
 		}
 
 		System.out.println(
-				"\n[" + busServer.getInetAddress().getHostAddress() + ":" + busServer.getLocalPort() + "] 버스 서버 열림");
+				"[" + busServer.getInetAddress().getHostAddress() + ":" + busServer.getLocalPort() + "] 버스 서버 열림");
 
 		try {
 			connection = busServer.accept();
+			System.out.println("[" + connection.getInetAddress().getHostAddress() + ":" + connection.getPort() + "] 연결 성공");
 			output = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-			intput = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		} catch (IOException e) {
 		}
 		
 		String msg = null;
 		while (true) {
 			try {
-				msg = intput.readLine(); // 메시지 수신
-				System.out.println(msg);
+				msg = input.readLine(); // 메시지 수신
+				if (msg == null) {
+					System.err.println("메시지 수신 실패");
+					break;
+				}
+					
+				System.out.println("받은 메시지 : " + msg);
+				
 			} catch (IOException e1) {
 				System.err.println("메시지 수신 실패");
+				break;
 			}
 		}
+		try {
+			output.close();
+			input.close();
+			connection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("연결 해제");
 	}
 }

@@ -37,7 +37,7 @@ public class Main {
 					serverThread.start();
 				}
 				else
-					System.out.println("이미 작동중.");
+					System.out.println("이미 작동중");
 				break;
 			// 2. 서버 닫기
 			case 2:
@@ -46,7 +46,7 @@ public class Main {
 					serverThread = null;
 				}
 				else
-					System.out.println("가동중인 server 없음.");
+					System.out.println("가동중인 server 없음");
 				break;
 			// 3. 프로그램 종료
 			case 3:
@@ -56,7 +56,10 @@ public class Main {
 				break MenuLoop;
 			// 4. 연결된 클라이언트 수 확인 (미구현)
 			case 4:
-				serverThread.printClientCount();
+				if (serverThread != null)
+					serverThread.printClientCount();
+				else
+					System.out.println("가동중인 server 없음");
 				break;
 			}
 		}
