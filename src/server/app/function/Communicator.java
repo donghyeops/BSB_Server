@@ -1,4 +1,4 @@
-package server.function;
+package server.app.function;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import database.DB;
+import server.bus.BusConnection;
+import server.bus.BusServer;
 
 public class Communicator {
 	private DB db = null; // Server Database
@@ -35,6 +36,7 @@ public class Communicator {
 	
 	/** 버스 아두이노와 연결 설정 */
 	public boolean connectToBus(int bus_id) {
+		/*
 		String address = db.getBusAddress(bus_id);
 		if (address == null) {
 			Log.err("어플", "IN", app_socket, "없는 버스 아이디 (입력된 아이디 = " + bus_id + ")");
@@ -60,6 +62,14 @@ public class Communicator {
 			// TODO Auto-generated catch block
 			return false;
 		}
+		return true;
+		*/
+		BusConnection BC = BusServer.findBus(bus_id);
+		if (BC == null)
+			return false;
+		bus_socket = BC.getSocket();
+		bus_output = BC.getWriter();
+		bus_intput = BC.getReader();
 		return true;
 	}
 	

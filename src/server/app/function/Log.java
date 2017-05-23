@@ -1,4 +1,4 @@
-package server.function;
+package server.app.function;
 
 import java.net.Socket;
 

@@ -6,17 +6,17 @@ import java.util.concurrent.Callable;
 
 import database.DB;
 import server.MSG;
-import server.function.Communicator;
-import server.function.Log;
-import server.function.PaySystem;
-import server.function.Reservation;
-import server.function.SenderToBus;
+import server.app.function.Communicator;
+import server.app.function.Log;
+import server.app.function.PaySystem;
+import server.app.function.Reservation;
+import server.app.function.SenderToBus;
 
 /**
  * 각 클라이언트와 1:1 연결을 이루는 서버의 자식 스레드
  */
 // http://blog.naver.com/ksch2004/220540914491
-public class ChildThread implements Callable<Void> {
+public class AppChild implements Callable<Void> {
 	private DB db = null; // Server Database
 	
 	private Socket app_socket = null; // 어플리케이션과 연결된 소켓
@@ -29,7 +29,7 @@ public class ChildThread implements Callable<Void> {
 	
 	
 	// 자식 스레드 생성자 : 초기화 역할
-	public ChildThread(Socket connection, DB db) {
+	public AppChild(Socket connection, DB db) {
 		this.app_socket = connection;
 		this.db = db;
 		CC = new Communicator(connection, db);

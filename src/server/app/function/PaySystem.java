@@ -1,4 +1,4 @@
-package server.function;
+package server.app.function;
 
 public class PaySystem {	
 	/** 0: 직접결제, 1:결제성공, 2:결제실패 */
