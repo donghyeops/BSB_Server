@@ -63,20 +63,10 @@ public class AppChild implements Callable<Void> {
 			switch (type) {
 			/* 예약 메시지 */ // 테스트 완료
 			case MSG.Query_AtoS_2:
-				if (queryBus(s_msg))
-					Log.out("어플", "IN", app_socket, "BUS_ID:" + reservation.bus_id + " 버스 정보 확인");
-				else {
-					Log.err("어플", "IN", app_socket, "버스 정보 확인 실패");
-					CC.sendToApp(MSG.Failure_StoA_0);
-				}
-				break;
-				
-			/* 예약 메시지 */ // 테스트 완료
-			case MSG.Reservation_AtoS_4:
-				if (reservateGetOn())
+				if (reservateGetOn(s_msg))
 					Log.out("어플", "IN", app_socket, "BUS_ID:" + reservation.bus_id + " 버스 예약");
 				else {
-					Log.err("어플", "IN", app_socket, "BUS_ID:" + reservation.bus_id + " 예약 실패");
+					Log.err("어플", "IN", app_socket, "예약 실패");
 					CC.sendToApp(MSG.Failure_StoA_0);
 				}
 				break;
@@ -132,25 +122,19 @@ public class AppChild implements Callable<Void> {
 		return null;
 	}
 	
-	/** 버스 정보 확인 함수
-	 * <br>1. 버스의 정보를 DB로부터 읽어서 어플에게 전송(NotifyOfBusBeacon_StoA_3)
+	/** 버스 예약 함수
+	 * <br>1. 버스의 정보를 DB로부터 읽고, 버스와 연결
+	 * <br>2. 버스에게 탑승 알림 메시지 전송(GetOnNext_StoB_5)
+	 * <br>3. 어플에게 버스 비콘 정보 전송(NotifyOfBusBeacon_StoA_3)
 	 *  */
-	private boolean queryBus(StringTokenizer s_msg) {
+	private boolean reservateGetOn(StringTokenizer s_msg) {
 		reservation.inputReservation(s_msg); // 예약 정보 받아서 기록
 		
 		String[] beaconInfo = db.getBusBeacon(reservation.bus_id); // DB로부터 버스의 비콘 정보 부르기
 
 		if (beaconInfo == null)
 			return false;
-		String msg = MSG.NotifyOfBusBeacon_StoA_3 + "-" + beaconInfo[0] + "-" + beaconInfo[1] + "-" + beaconInfo[2];
-		return CC.sendToApp(msg); // 어플에게 비콘 정보 보냄
-	}
-	
-	/** 탑승 예약 함수
-	 * <br>1. 버스와 연결 후, 버스에게 탑승 알림 메시지 전송(GetOnNext_StoB_5)
-	 * <br>2. 어플에게 성공 메시지 응답(Success_StoA_1)
-	 *  */
-	private boolean reservateGetOn() {
+		
 		if (!CC.connectToBus(reservation.bus_id)) // 버스 아두이노와 연결
 			return false;
 		
@@ -158,7 +142,8 @@ public class AppChild implements Callable<Void> {
 			return false;
 		reservation.isReservated = true; // 예약 처리
 		
-		return CC.sendToApp(MSG.Success_StoA_1); // 성공 메시지 응답
+		String msg = MSG.NotifyOfBusBeacon_StoA_3 + "-" + beaconInfo[0] + "-" + beaconInfo[1] + "-" + beaconInfo[2];
+		return CC.sendToApp(msg); // 성공 메시지 응답
 	}
 	
 	/** 예약 취소 함수

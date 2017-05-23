@@ -29,7 +29,7 @@ public interface MSG {
 	/** 예약 메시지
 	 *  <p> Example : "4"
 	 *  */
-	int Reservation_AtoS_4 = 4;
+	//int Reservation_AtoS_4 = 4;
 	
 	/** 탑승 예정 알람 메시지
 	 *  <p> Example : "5"
