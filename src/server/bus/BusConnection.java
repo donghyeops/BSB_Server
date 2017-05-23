@@ -11,7 +11,6 @@ import java.net.UnknownHostException;
 import server.app.function.Log;
 
 public class BusConnection {
-	private int bus_id;
 	private Socket bus_socket = null; // 버스 아두이노와 연결된 소켓
 	private BufferedWriter bus_output = null; // 버스 아두이노 출력 버퍼
 	private BufferedReader bus_intput = null; // 버스 아두이노 입력 버퍼

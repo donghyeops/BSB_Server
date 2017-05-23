@@ -55,6 +55,7 @@ public class BusChild implements Callable<Void> {
 		}
 		
 		busList.put(bus_id, BC);
+		Log.out("버스", "CO", bus_socket, "BusID:" + bus_id + " 연결 성공");
 		return null;
 	}
 }

@@ -67,6 +67,7 @@ public class BusArduino {
 		System.out.print("보낼 메시지 입력 : ");
 		sendMsg = scan.nextLine();
 		busArduino.sendMsg(sendMsg); // 메시지 전송
+		System.out.println("== 메시지 수신 ==");
 		while (true) {
 			recvMsg = busArduino.receiveMsg(); // 메시지 수신
 			if (recvMsg == null) {
