@@ -1,10 +1,11 @@
-package server;
+package server.app;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 
 import database.DB;
+import server.MSG;
 import server.function.Communicator;
 import server.function.Log;
 import server.function.PaySystem;

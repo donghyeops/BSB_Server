@@ -1,7 +1,7 @@
 package main;
 import java.util.Scanner;
 
-import server.ServerThread;
+import server.app.ServerThread;
 
 /*
  * 서버 관리 프로그램.
