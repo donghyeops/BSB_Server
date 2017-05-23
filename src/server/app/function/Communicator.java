@@ -139,12 +139,5 @@ public class Communicator {
 		app_output.close();
 		app_intput.close();
 		app_socket.close();
-
-		// 버스와의 연결 종료
-		if (bus_socket == null)
-			return;
-		bus_output.close();
-		bus_intput.close();
-		bus_socket.close();
 	}
 }
