@@ -20,7 +20,7 @@ public class BusServer extends Thread {
 	private static boolean STOP_FLAG = false;
 	private ExecutorService pool; // 자식 스레드 풀
 	private ServerSocket server;
-	private static HashMap<Integer, BusConnection> busList = new HashMap<Integer, BusConnection>(); // 자식 스레드 연결 관리
+	private static HashMap<String, BusConnection> busList = new HashMap<String, BusConnection>(); // 자식 스레드 연결 관리
 	
 	// 싱글톤
 	public static BusServer getInstance() {
@@ -64,7 +64,7 @@ public class BusServer extends Thread {
 			sleep(500);
 			pool.shutdown(); // 풀 가동 종료
 			sleep(500);
-			for (Entry<Integer, BusConnection> entry : busList.entrySet()) { // 연결된 소켓 모두 종료
+			for (Entry<String, BusConnection> entry : busList.entrySet()) { // 연결된 소켓 모두 종료
 				entry.getValue().endConnection();
 			}
 			
@@ -92,9 +92,9 @@ public class BusServer extends Thread {
 	 * @param bus_id
 	 * @return BusConnection
 	 */
-	public static BusConnection findBus(int bus_id) {
-		for (int key : busList.keySet()) {
-			if (key == bus_id)
+	public static BusConnection findBus(String bus_id) {
+		for (String key : busList.keySet()) {
+			if (key.equals(bus_id))
 				return busList.get(key);
 		}
 		return null;

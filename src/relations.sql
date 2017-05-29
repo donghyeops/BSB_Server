@@ -2,7 +2,7 @@ drop table stop;
 drop table bus;
 
 create table bus(
-	bus_id int not null primary key,
+	bus_id varchar(45) not null primary key,
 	f_beacon varchar(45) unique, -- 앞문의 비콘 아이디
 	b_beacon varchar(45) unique, -- 뒷문의 비콘 아이디
 	distance float, -- 비콘 사이의 거리

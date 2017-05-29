@@ -40,7 +40,7 @@ public class SQL_DB implements DB {
 		disconnect();
 	}
 	
-	public String getBusAddress(int bus_id) {
+	public String getBusAddress(String bus_id) {
 		String sql = "select ip, port from bus where bus_id='" + bus_id + "'";
 		String address = null;
 		try {
@@ -57,7 +57,7 @@ public class SQL_DB implements DB {
 		return address;
 	}
 	
-	public String[] getBusBeacon(int bus_id) {
+	public String[] getBusBeacon(String bus_id) {
 		String[] beaconInfo = new String[3];
 		String sql = "select f_beacon, b_beacon, distance from bus where bus_id='" + bus_id + "'";
 		try {

@@ -15,7 +15,7 @@ import server.app.function.Reservation;
 import server.app.function.SenderToBus;
 
 public class BusChild implements Callable<Void> {
-	private HashMap<Integer, BusConnection> busList = null; // Server Database
+	private HashMap<String, BusConnection> busList = null; // Server Database
 	
 	private Socket bus_socket = null; // 버스와 연결된 소켓
 	
@@ -24,7 +24,7 @@ public class BusChild implements Callable<Void> {
 	private BusConnection BC = null;
 	
 	// 자식 스레드 생성자 : 초기화 역할
-	public BusChild(Socket connection, HashMap<Integer, BusConnection> busList) {
+	public BusChild(Socket connection, HashMap<String, BusConnection> busList) {
 		this.bus_socket = connection;
 		this.busList = busList;
 	}
@@ -45,14 +45,9 @@ public class BusChild implements Callable<Void> {
 			return null;
 		}
 		
-		int bus_id;
-		try {
-			bus_id = Integer.parseInt(msg);
-		}
-		catch (NumberFormatException e) {
-			Log.err("버스", "IN", bus_socket, "잘못된 아이디 형식");
-			return null;
-		}
+		String bus_id;
+		bus_id = msg;
+		// 오류 체크
 		
 		busList.put(bus_id, BC);
 		Log.out("버스", "CO", bus_socket, "BusID:" + bus_id + " 연결 성공");

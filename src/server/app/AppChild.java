@@ -68,6 +68,7 @@ public class AppChild implements Callable<Void> {
 				else {
 					Log.err("어플", "IN", app_socket, "예약 실패");
 					CC.sendToApp(MSG.Failure_StoA_0);
+					break SERVICE;
 				}
 				break;
 				

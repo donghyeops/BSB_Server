@@ -35,7 +35,7 @@ public class Communicator {
 	}
 	
 	/** 버스 아두이노와 연결 설정 */
-	public boolean connectToBus(int bus_id) {
+	public boolean connectToBus(String bus_id) {
 		/*
 		String address = db.getBusAddress(bus_id);
 		if (address == null) {
